@@ -1,0 +1,292 @@
+{
+  "nodes": [
+    {
+      "id": 7,
+      "label": "Initial"
+    },
+    {
+      "id": 8,
+      "label": "LoadingFromStorage"
+    },
+    {
+      "id": 15,
+      "label": "Loaded.AccessToken.CheckingExpiration"
+    },
+    {
+      "id": 17,
+      "label": "Loaded.AccessToken.Invalid"
+    },
+    {
+      "id": 19,
+      "label": "Loaded.AccessToken.Ready"
+    },
+    {
+      "id": 21,
+      "label": "AccessToken.Invalid.TryRefreshToken"
+    },
+    {
+      "id": 23,
+      "label": "AccessToken.Invalid.TryRefresh.WithRefreshToken"
+    },
+    {
+      "id": 24,
+      "label": "AccessToken.Invalid.TryRefresh.RefreshingTokens"
+    },
+    {
+      "id": 31,
+      "label": "AccessToken.Invalid.TryRefresh.CheckingRefreshTokenExpiration"
+    },
+    {
+      "id": 33,
+      "label": "AccessToken.Invalid.TryRefresh.RefreshToken.Ready"
+    },
+    {
+      "id": 35,
+      "label": "Loaded.but.NOT_AUTHENTICATED!!"
+    },
+    {
+      "id": 38,
+      "label": "Loaded.AccessToken.Authenticating"
+    },
+    {
+      "id": 41,
+      "label": "UserLoggingIn"
+    },
+    {
+      "id": 45,
+      "label": "AUTHENTICATED!!!!"
+    }
+  ],
+  "links": [
+    {
+      "id": 6,
+      "source": 7,
+      "target": 8,
+      "name": "load"
+    },
+    {
+      "id": 21,
+      "source": 15,
+      "target": 17,
+      "name": "expired"
+    },
+    {
+      "id": 27,
+      "source": 21,
+      "target": 23,
+      "name": "hasRefreshToken"
+    },
+    {
+      "id": 42,
+      "source": 31,
+      "target": 33,
+      "name": "notExpired"
+    },
+    {
+      "id": 58,
+      "source": 17,
+      "target": 21,
+      "name": "always"
+    },
+    {
+      "id": 69,
+      "source": 33,
+      "target": 24,
+      "name": "refreshTokens"
+    },
+    {
+      "id": 79,
+      "source": 19,
+      "target": 38,
+      "name": "always"
+    },
+    {
+      "id": 88,
+      "source": 35,
+      "target": 41,
+      "name": "login"
+    },
+    {
+      "id": 136,
+      "source": 23,
+      "target": 31,
+      "name": "checkExpiration"
+    },
+    {
+      "id": 139,
+      "source": 15,
+      "target": 19,
+      "name": "valid"
+    },
+    {
+      "id": 147,
+      "source": 8,
+      "target": 35,
+      "name": "noTokens"
+    },
+    {
+      "id": 148,
+      "source": 21,
+      "target": 35,
+      "name": "noRefreshToken"
+    },
+    {
+      "id": 164,
+      "source": 41,
+      "target": 45,
+      "name": "success"
+    },
+    {
+      "id": 26,
+      "source": 7,
+      "target": 8,
+      "name": "load"
+    },
+    {
+      "id": 35,
+      "source": 8,
+      "target": 15,
+      "name": "gotTokens"
+    },
+    {
+      "id": 40,
+      "source": 38,
+      "target": 45,
+      "name": "success"
+    },
+    {
+      "id": 41,
+      "source": 24,
+      "target": 19,
+      "name": "gotAccessToken"
+    },
+    {
+      "id": 43,
+      "source": 24,
+      "target": 35,
+      "name": "error"
+    },
+    {
+      "id": 57,
+      "source": 31,
+      "target": 35,
+      "name": "expired"
+    }
+  ],
+  "edges": [
+    {
+      "id": 6,
+      "source": 7,
+      "target": 8,
+      "label": "load"
+    },
+    {
+      "id": 21,
+      "source": 15,
+      "target": 17,
+      "label": "expired"
+    },
+    {
+      "id": 27,
+      "source": 21,
+      "target": 23,
+      "label": "hasRefreshToken"
+    },
+    {
+      "id": 42,
+      "source": 31,
+      "target": 33,
+      "label": "notExpired"
+    },
+    {
+      "id": 58,
+      "source": 17,
+      "target": 21,
+      "label": "always"
+    },
+    {
+      "id": 69,
+      "source": 33,
+      "target": 24,
+      "label": "refreshTokens"
+    },
+    {
+      "id": 79,
+      "source": 19,
+      "target": 38,
+      "label": "always"
+    },
+    {
+      "id": 88,
+      "source": 35,
+      "target": 41,
+      "label": "login"
+    },
+    {
+      "id": 136,
+      "source": 23,
+      "target": 31,
+      "label": "checkExpiration"
+    },
+    {
+      "id": 139,
+      "source": 15,
+      "target": 19,
+      "label": "valid"
+    },
+    {
+      "id": 147,
+      "source": 8,
+      "target": 35,
+      "label": "noTokens"
+    },
+    {
+      "id": 148,
+      "source": 21,
+      "target": 35,
+      "label": "noRefreshToken"
+    },
+    {
+      "id": 164,
+      "source": 41,
+      "target": 45,
+      "label": "success"
+    },
+    {
+      "id": 26,
+      "source": 7,
+      "target": 8,
+      "label": "load"
+    },
+    {
+      "id": 35,
+      "source": 8,
+      "target": 15,
+      "label": "gotTokens"
+    },
+    {
+      "id": 40,
+      "source": 38,
+      "target": 45,
+      "label": "success"
+    },
+    {
+      "id": 41,
+      "source": 24,
+      "target": 19,
+      "label": "gotAccessToken"
+    },
+    {
+      "id": 43,
+      "source": 24,
+      "target": 35,
+      "label": "error"
+    },
+    {
+      "id": 57,
+      "source": 31,
+      "target": 35,
+      "label": "expired"
+    }
+  ]
+}
