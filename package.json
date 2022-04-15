@@ -16,7 +16,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com:MrWormsy/graph-format-converter.git"
+    "url": "git+ssh://git@github.com:WinstonFassett/graph-format-converter.git"
   },
   "keywords": [
     "Typescript",
