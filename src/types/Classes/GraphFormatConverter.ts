@@ -619,6 +619,204 @@ export class GraphFormatConverter {
     }
 
     /**
+ * Get the Graphml format of the graph
+     * @return string The graph a Graphml string Object
+     */
+    public toYedGraphml = (): string => {
+
+        // Variables to know if the attributes already exists
+        let doesColorNotExistForNodes,doesColorNotExistForEdges , doesXNotExistForNodes , doesYNotExistForNodes , doesZNotExistForNodes , doesXNotExistForEdges , doesYNotExistForEdges , doesZNotExistForEdges, doesLabelNotExistForNodes , doesLabelNotExistForEdges, doesEdgelabelNotExistForEdges, doesSizeNotExistForNodes, doesSizeNotExistForEdges, doesShapeNotExistForNodes, doesShapeNotExistForEdges, doesWeightNotExistForEdges, doesThicknessNotExistForEdges;
+
+        // Get the nodes and the edges as formatted JSON
+        const nodes: any[] = this.getNodes().map(GraphFormatConverter.getElementAsYedGraphmlJSON);
+        const edges: any[] = this.getEdges().map(GraphFormatConverter.getElementAsYedGraphmlJSON, 'edge');
+
+        // Create the keys (the attributes)
+        const keys: any[] = [];
+        this.nodeAttributes.forEach((node) => {
+
+            // We need to check if there is the following attributes in the node attributes object
+            if (node.id === "x") {doesXNotExistForNodes = false}
+            else if (node.id === "y") {doesYNotExistForNodes = false}
+            else if (node.id === "z") {doesZNotExistForNodes = false}
+            else if (node.id === "size") {doesSizeNotExistForNodes = false}
+            else if (node.id === "shape") {doesShapeNotExistForNodes = false}
+            else if (node.id === "label") {
+                doesLabelNotExistForNodes = false;
+                // <key id="d4" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+                keys.push({
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: node.title,
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'NodeLabels',
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: GraphFormatConverter.jsonTypeToGRAPHML(node.type),
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node",
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: node.id
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'd4',
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}yfiles.type`]: "nodegraphics"
+
+                })    
+                return;
+            }
+            else if (node.id === "color" || node.id === "r" || node.id === "g" || node.id === "b") {doesColorNotExistForNodes = false}
+
+            keys.push({
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: node.title,
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: GraphFormatConverter.jsonTypeToGRAPHML(node.type),
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: node.id
+            })
+        });
+
+        this.edgeAttributes.forEach((edge) => {
+
+            // We need to check if there is the following attributes in the edge attributes object
+            if (edge.id === "x") {doesXNotExistForEdges = false}
+            else if (edge.id === "y") {doesYNotExistForEdges = false}
+            else if (edge.id === "z") {doesZNotExistForEdges = false}
+            else if (edge.id === "size") {doesSizeNotExistForEdges = false}
+            else if (edge.id === "shape") {doesShapeNotExistForEdges = false}
+            else if (edge.id === "weight") {doesWeightNotExistForEdges = false}
+            else if (edge.id === "thickness") {doesThicknessNotExistForEdges = false}
+            else if (edge.id === "label") {
+                doesLabelNotExistForEdges = false;
+                // <key id="d4" for="node" attr.name="NodeLabels" y:attr.uri="http://www.yworks.com/xml/yfiles-common/2.0/NodeLabels"/>
+                keys.push({
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: node.title,
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'NodeLabels',
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: GraphFormatConverter.jsonTypeToGRAPHML(node.type),
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge",
+                    // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: node.id
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'd9',
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}yfiles.type`]: "edgegraphics"
+
+                })    
+                 
+                return;
+            }
+            else if (edge.id === "edgelabel") {doesEdgelabelNotExistForEdges = false}
+            else if (edge.id === "color" || edge.id === "r" || edge.id === "g" || edge.id === "b") {doesColorNotExistForEdges = false}
+
+            keys.push({
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: edge.title,
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: GraphFormatConverter.jsonTypeToGRAPHML(edge.type),
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: edge.id
+            })
+        });
+
+        // Now we check if the attribute exists in the dataset if it is not already set in the attributes object from below
+        doesColorNotExistForNodes = doesColorNotExistForNodes === undefined ? this.nodes.find((node) => node.color !== undefined) !== undefined : false;
+        doesColorNotExistForEdges = doesColorNotExistForEdges  === undefined ? this.edges.find((edge) => edge.color !== undefined) !== undefined : false;
+
+        doesLabelNotExistForNodes = doesLabelNotExistForNodes  === undefined ? this.nodes.find((node) => node.label !== undefined) !== undefined : false;
+        doesLabelNotExistForEdges = doesLabelNotExistForEdges  === undefined ? this.edges.find((edge) => edge.label !== undefined) !== undefined : false;
+        doesEdgelabelNotExistForEdges = doesEdgelabelNotExistForEdges  === undefined ? this.edges.find((edge) => edge.edgelabel !== undefined) !== undefined : false;
+
+        doesSizeNotExistForNodes = doesSizeNotExistForNodes  === undefined ? this.nodes.find((node) => node.size !== undefined) !== undefined : false;
+        doesSizeNotExistForEdges = doesSizeNotExistForEdges  === undefined ? this.edges.find((edge) => edge.size !== undefined) !== undefined : false;
+
+        doesShapeNotExistForNodes = doesShapeNotExistForNodes  === undefined ? this.nodes.find((node) => node.shape !== undefined) !== undefined : false;
+        doesShapeNotExistForEdges = doesShapeNotExistForEdges  === undefined ? this.edges.find((edge) => edge.shape !== undefined) !== undefined : false;
+
+        doesWeightNotExistForEdges = doesWeightNotExistForEdges  === undefined ? this.edges.find((edge) => edge.weight !== undefined) !== undefined : false;
+        doesThicknessNotExistForEdges = doesThicknessNotExistForEdges  === undefined ? this.edges.find((edge) => edge.thickness !== undefined) !== undefined : false;
+
+        doesXNotExistForNodes = doesXNotExistForNodes === undefined  ? this.nodes.find((node) => node.x !== undefined) !== undefined : false;
+        doesYNotExistForNodes = doesYNotExistForNodes  === undefined ? this.nodes.find((node) => node.y !== undefined) !== undefined : false;
+        doesZNotExistForNodes = doesZNotExistForNodes  === undefined ? this.nodes.find((node) => node.z !== undefined) !== undefined : false;
+
+        doesXNotExistForEdges = doesXNotExistForEdges === undefined  ? this.edges.find((edge) => edge.x !== undefined) !== undefined : false;
+        doesYNotExistForEdges = doesYNotExistForEdges === undefined  ? this.edges.find((edge) => edge.y !== undefined) !== undefined : false;
+        doesZNotExistForEdges = doesZNotExistForEdges === undefined  ? this.edges.find((edge) => edge.z !== undefined) !== undefined : false;
+
+        // If it does not exist we add it to the attributes manually
+        if (doesXNotExistForNodes) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'x', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'x'})}
+        if (doesYNotExistForNodes) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'y', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'y'})}
+        if (doesZNotExistForNodes) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'z', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'z'})}
+
+        if (doesXNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'x', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'x'})}
+        if (doesYNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'y', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'y'})}
+        if (doesZNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'z', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'z'})}
+
+        if (doesLabelNotExistForNodes) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'label', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'string', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'label'})}
+        if (doesLabelNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'label', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'string', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'label'})}
+        if (doesEdgelabelNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'edgelabel', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'string', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'edgelabel'})}
+
+        if (doesSizeNotExistForNodes) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'size', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'size'})}
+        if (doesShapeNotExistForNodes) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'shape', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'string', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'shape'})}
+
+        if (doesSizeNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'size', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'size'})}
+        if (doesShapeNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'shape', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'string', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'shape'})}
+        if (doesWeightNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'weight', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'weight'})}
+        if (doesThicknessNotExistForEdges) {keys.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'thickness', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'float', [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge", [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'thickness'})}
+
+        // We need to set the r, g, and b values for the nodes and the edges
+        if (doesColorNotExistForNodes) {
+            keys.push({
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'r',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'int',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'r'
+            }, {
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'g',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'int',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'g'
+            }, {
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'b',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'int',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "node",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'b'
+            });
+        }
+        if (doesColorNotExistForEdges) {
+            keys.push({
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'r',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'int',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'r'
+            }, {
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'g',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'int',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'g'
+            }, {
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.name`]: 'b',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}attr.type`]: 'int',
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}for`]: "edge",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: 'b'
+            });
+        }
+
+        // The root element
+        const root = {
+            "?xml": {
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}version`]: "1.0",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}encoding`]: "UTF-8",
+            },
+            "graphml": {
+                key: keys,
+                "graph": {
+                    node: nodes,
+                    edge: edges,
+                    // If the edgeType is mutual we need to treat it as 'directed'
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}edgedefault`]: this.graphAttributes.edgeType === "mutual" ? "directed" : this.graphAttributes.edgeType,
+                    [`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`]: this.graphAttributes.id
+                },
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}xmlns`]: "http://graphml.graphdrawing.org/xmlns",
+                [`${GraphFormatConverter.parserOptions.attributeNamePrefix}xmlns:y`]: "http://www.yworks.com/xml/graphml",
+                // [`${GraphFormatConverter.parserOptions.attributeNamePrefix}xmlns:x`]: "http://www.yworks.com/xml/yfiles-common/markup/3.0"
+                
+            }
+        }
+
+        // Build the document
+        const builder = new XMLBuilder(GraphFormatConverter.builderOptions);
+
+        // Return the XML built and "fix" the <?xml ... /></?xml> to <?xml ... ?> and replace the backspace chars
+        return builder.build(root).replace(/><\/\?xml>/, "?>").replace("\b", "");
+    }
+
+    /**
      * Get an element as a GRAPHML 'fast-xml-parser' JSON object
      * @param element The element
      */
@@ -657,6 +855,69 @@ export class GraphFormatConverter {
                     elementObject.data.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: "r", "#text": tinycolor2(value).toRgb().r});
                     elementObject.data.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: "g", "#text": tinycolor2(value).toRgb().g});
                     elementObject.data.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: "b", "#text": tinycolor2(value).toRgb().b});
+                    break;
+                default:
+                    elementObject.data.push({
+                        [`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: key,
+                        '#text': `${value}`.replace(new RegExp(/&/, 'g'), "&amp;"),
+                    });
+                    break;
+            }
+        });
+        return elementObject;
+    }
+
+    /**
+     * Get an element as a GRAPHML 'fast-xml-parser' JSON object
+     * @param element The element
+     */
+    private static getElementAsYedGraphmlJSON = (element: any) => {
+
+        // The element as an object
+        const elementObject: any = {
+            "data": []
+        }
+
+        // For each attribute we want to get it a formatted JSON
+        Object.entries(element).forEach(([key, value]: [string, any]) => {
+
+            // Switch the name of the attribute to format the object
+            switch (key) {
+
+                // If the value is the attributes we create a tree for it
+                case "attributes":
+                    Object.entries(value).forEach(([elementKey, elementValue]: [string, any]) => {
+                        elementObject.data.push({
+                            [`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: elementKey,
+                            "#text": `${elementValue}`.replace(new RegExp(/&/, 'g'), "&amp;"),
+                        });
+                    });
+                    break;
+                case "id":
+                    elementObject[`${GraphFormatConverter.parserOptions.attributeNamePrefix}id`] = value;
+                    break;
+                case "source":
+                    elementObject[`${GraphFormatConverter.parserOptions.attributeNamePrefix}source`] = value;
+                    break;
+                case "target":
+                    elementObject[`${GraphFormatConverter.parserOptions.attributeNamePrefix}target`] = value;
+                    break;
+                case "color":
+                    elementObject.data.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: "r", "#text": tinycolor2(value).toRgb().r});
+                    elementObject.data.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: "g", "#text": tinycolor2(value).toRgb().g});
+                    elementObject.data.push({[`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: "b", "#text": tinycolor2(value).toRgb().b});
+                    break;
+                case "label":
+                    elementObject.data.push(
+                        {
+                            [`${GraphFormatConverter.parserOptions.attributeNamePrefix}key`]: element.source ? 'd9' : 'd4',
+                            [element.source ? 'y:PolyLineEdge' : 'y:ShapeNode']: {
+                                [element.source ? 'y:EdgeLabel' : 'y:NodeLabel']: {
+                                    '#text': `${value}`.replace(new RegExp(/&/, 'g'), "&amp;"),
+                                }
+                            }
+                        }
+                    );
                     break;
                 default:
                     elementObject.data.push({
@@ -723,7 +984,7 @@ export class GraphFormatConverter {
                 case "x":
                 case "y":
                 case "z":
-                    break;
+                    break;             
                 default:
                     elementObject[`${GraphFormatConverter.parserOptions.attributeNamePrefix}${key}`] = Number.isNaN(value) ? value.replace('&', "&amp;") : value;
                     break;

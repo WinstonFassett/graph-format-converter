@@ -3,7 +3,7 @@ const fs = require("fs");
 const {GraphFormatConverter} = require("./dist/index")
 
 // Read the JSON file
-const jsonFile = JSON.parse(fs.readFileSync("data/Movie.json", "utf8"))
+const jsonFile = JSON.parse(fs.readFileSync("data/Generated.json", "utf8"))
 const jsonGraph = GraphFormatConverter.fromJson(jsonFile);
 
 // Read the JSON file from a Graphology export
@@ -44,6 +44,9 @@ fs.writeFileSync("data/output/GEXF_TO_GRAPHML.graphml", gexfGraph.toGraphml())
 fs.writeFileSync("data/output/GRAPHML_TO_GRAPHML.graphml", graphmlGraph.toGraphml())
 // GEPHI : OK | UI : OK
 fs.writeFileSync("data/output/GRAPHOLOGY_TO_GRAPHML.graphml", graphologyJGraph.toGraphml())
+
+// GEPHI : OK | UI : OK
+fs.writeFileSync("data/output/JSON_TO_YEDGRAPHML.graphml", jsonGraph.toYedGraphml())
 
 // GEPHI :  | UI :
 fs.writeFileSync("data/output/JSON_TO_GRAPHOLOGY.json", JSON.stringify(jsonGraph.toGraphology(), null, '\t'))
