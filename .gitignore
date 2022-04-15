@@ -1,6 +1,6 @@
 /node_modules/
 /.idea/
-/dist
+# /dist
 /tsconfig.tsbuildinfo
 /data/output/
 .DS_Store
